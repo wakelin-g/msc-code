@@ -1,0 +1,17 @@
+#!/bin/bash
+
+REFS="mm10-2020-A_build"
+GENOME="$REFS/Mus_musculus.GRCm38.dna.primary_assembly.fa.modified"
+ANNOTS="$REFS/gencode.vM23.primary_assembly.annotation.gtf.modified"
+GENOME_TDT="$REFS/$(basename $GENOME .fa.modified)_tdTomato.fa"
+ANNOTS_TDT="$REFS/$(basename $ANNOTS .gtf.modified)_tdTomato.gtf"
+
+if [ ! -f $GENOME_TDT ]; then
+    cp $GENOME $GENOME_TDT
+    cat tdTomato.fa >> $GENOME_TDT
+fi
+
+if [ ! -f $ANNOTS_TDT ]; then
+    cp $ANNOTS $ANNOTS_TDT
+    cat tdTomato.gtf >> $ANNOTS_TDT
+fi

@@ -1,0 +1,8 @@
+*.rds
+*.h5ad
+*.h5
+*.mtx
+*.mtx.gz
+*.tsv
+*.tsv.gz
+outs/

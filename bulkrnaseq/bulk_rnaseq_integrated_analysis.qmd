@@ -1,0 +1,63 @@
+---
+title: "Integrated bulk RNA-seq analysis"
+author: 
+    - name: "Griffen Wakelin"
+      id: "gw"
+      orcid: "0000-0001-9339-5387"
+      email: "wakelin@dal.ca"
+      affiliations:
+        - name: "Dalhousie University"
+          city: "Halifax"
+          state: "NS"
+          url: "https://www.dal.ca"
+date: "June 10, 2024"
+date-modified: "June 10, 2024"
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-overflow: scroll
+    code-annotations: hover
+    link-external-newwindow: true
+    link-external-icon: true
+    smooth-scroll: true
+    embed-resources: true
+    theme: united
+    default-image-extension: svg
+execute: 
+  enabled: true
+  cache: false
+  warning: false
+---
+
+```{r, echo=FALSE}
+library(DESeq2); library(tidyverse); library(ggpubr)
+df <- readr::read_table("./smmc_bulk_rnaseq.txt"); df2 <- readr::read_table("./ncb2017_raw_bulkrnaseq_counts.txt")
+meta <- readr::read_csv("./smmc_bulk_rnaseq_meta.csv"); meta2 <- readr::read_csv("./ncb2017_raw_bulkrnaseq_counts_meta.txt")
+df <- df %>% select(-c(Chr, Start, End, Strand, Length)) %>% as.data.frame()
+df2 <- df2 %>% select(-c(Chr, Start, End, Strand, Length)) %>% as.data.frame()
+df <- cbind(df, df2); meta <- rbind(meta, meta2)
+rownames(df) <- df$Geneid
+df <- df %>% select(-c(Geneid))
+tmp <- colnames(df)
+colnames(df) <- unname(sapply(tmp, function(x) strsplit(strsplit(x, "/")[[1]][[2]], "_")[[1]][[1]]))
+```
+
+```{r}
+meta <- meta[meta$condition=='Fresh',]
+df <- df[,colnames(df) %in% meta$sample]
+```
+
+```{r, echo=FALSE, fig.height=6, fig.width=8, fig.dpi=300}
+dds <- DESeqDataSetFromMatrix(df, meta, design = ~0+condition)
+dds <- DESeq(dds)
+#dds <- estimateSizeFactors(dds)
+#vsd <- varianceStabilizingTransformation(dds, blind = TRUE)
+#pca <- DESeq2::plotPCA(vsd, intgroup = "condition", returnData = TRUE)
+#pca$note <- colData(dds)$note
+#pca$dataset <- colData(dds)$dataset
+#pca$celltype <- colData(dds)$celltype
+```
+```{r}
+ggpubr::ggscatter(pca, x="PC1", y="PC2", color="dataset", shape="note", size=4) + ggpubr::theme_pubclean()
+```

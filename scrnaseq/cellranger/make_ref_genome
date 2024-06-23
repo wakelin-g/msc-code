@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cellranger mkref --genome=Mmusculus_mm10_tdTomato \
+    --fasta=./mm10-2020-A_build/Mus_musculus.GRCm38.dna.primary_assembly_tdTomato.fa \
+    --genes=./mm10-2020-A_build/gencode.vM23.primary_assembly.annotation_tdTomato.gtf

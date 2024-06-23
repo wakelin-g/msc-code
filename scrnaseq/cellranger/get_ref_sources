@@ -1,0 +1,12 @@
+BIOTYPE_PATTERN="(protein_coding|lncRNA|IG_C_gene|IG_D_gene|IG_J_gene|IG_LV_g
+ene|IG_V_gene|IG_V_pseudogene|IG_J_pseudogene|IG_C_pseudogene|TR_C_gene|TR_D_
+gene|TR_J_gene|TR_V_gene|TR_V_pseudogene|TR_J_pseudogene)"
+GENE_PATTERN="gene_type \"${BIOTYPE_PATTERN}\""
+TX_PATTERN="transcript_type \"${BIOTYPE_PATTERN}\""
+READTHROUGH_PATTERN="tag \"readthrough_transcript\""
+
+cat "$gtf_modified" | awk '$3 == "transcript"' | grep -E "$GENE_PATTERN" | grep -E "$TX_PATTERN" | grep -Ev "$READTHROUGH_PATTERN" | sed -E 's/.*(gene_id"[^"]+").*/\1/' | sort | uniq > "${build}/gene_allowlist"
+
+gtf_filtered="${build}/$(basename "$gtf_in").filtered"
+grep -E "^#" "$gtf_modified" > "$gtf_filtered"
+grep -Ff "${build}/gene_allowlist" "$gtf_modified" >> "$gtf_filtered"
