@@ -6,3 +6,8 @@
 *.tsv
 *.tsv.gz
 outs/
+.Rproj.user
+*.svg
+*.png
+.DS_Store
+*/.DS_Store
